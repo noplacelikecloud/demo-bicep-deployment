@@ -17,7 +17,7 @@ variables:
 
 steps:
 - task: AzurePowerShell@5
-  displayName: Deploy Structure with Azure Storage Table
+  displayName: Deploy with Azure Storage Table
   env:
       WorkloadName: "NPLCTestWorkload"
       DeploymentName: "Deployment"
@@ -29,15 +29,14 @@ steps:
       Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
       Import-Module AzTable
 
-      $DeploymentParameters = Read-TableStorage ´
-        -StorageAccountName $env:StorageAccountName ´
-        -TableName $env:TableName ´
-        -StorageAccountRG $env:StorageAccountRG ´
-        -PartitionKey $env:WorkloadName ´
+      $DeploymentParameters = Read-TableStorage `
+        -StorageAccountName $env:StorageAccountName `
+        -TableName $env:TableName `
+        -StorageAccountRG $env:StorageAccountRG `
+        -PartitionKey $env:WorkloadName `
         -RowKey $env:DeploymentName
       
-      New-AzSubscriptionDeployment ´
-        -Name "StructureDeployment"
-        -Location $DeploymentParameters.location
-        -TemplateFile $(Build.SourcesDirectory)/main.structure.bicep
+      New-AzSubscriptionDeployment ` 
+        -Location $DeploymentParameters.location `
+        -TemplateFile $(Build.SourcesDirectory)/main.bicep `
         -TemplateParameterObject $DeploymentParameters
