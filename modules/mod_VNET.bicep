@@ -1,6 +1,9 @@
 param name string
 param location string
 param dnsServer string
+param VNETPrefix string
+param SubnetName string
+param SubnetPrefix string
 
 resource VNET 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   name: name
@@ -8,7 +11,7 @@ resource VNET 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   properties:{
     addressSpace: {
       addressPrefixes:[
-        '192.168.10.0/16'
+        VNETPrefix
       ]
     }
     dhcpOptions:(!empty(dnsServer)) ? {
@@ -17,9 +20,9 @@ resource VNET 'Microsoft.Network/virtualNetworks@2022-01-01' = {
       ]
     }:json('null')
     subnets:[{
-      name: 'servers'
+      name: SubnetName
       properties: {
-        addressPrefix: '192.168.10.0/24'
+        addressPrefix: SubnetPrefix
       }
     }]
   }
