@@ -6,6 +6,7 @@ param location string
 param subnetName string
 param VMSize string
 param localAdminUser string
+@secure()
 param localAdminPasswd string
 
 module VM 'modules/mod_VM.bicep' = {
