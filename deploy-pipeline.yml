@@ -22,7 +22,7 @@ steps:
       WorkloadName: "NPLCTestWorkload"
       DeploymentName: "Structure"
   inputs:
-    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    azureSubscription: '' ## Fill here your Service Connection
     ScriptType: 'InlineScript'
     azurePowerShellVersion: 'LatestVersion'
     Inline: |
@@ -47,7 +47,7 @@ steps:
       WorkloadName: "NPLCTestWorkload"
       DeploymentName: "Network"
   inputs:
-    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    azureSubscription: '' ## Fill here your Service Connection
     ScriptType: 'InlineScript'
     azurePowerShellVersion: 'LatestVersion'
     Inline: |
@@ -73,7 +73,7 @@ steps:
       WorkloadName: "NPLCTestWorkload"
       DeploymentName: "Computing"
   inputs:
-    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    azureSubscription: '' ## Fill here your Service Connection
     ScriptType: 'InlineScript'
     azurePowerShellVersion: 'LatestVersion'
     Inline: |
