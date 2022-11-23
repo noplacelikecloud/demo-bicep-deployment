@@ -3,6 +3,7 @@ targetScope = 'resourceGroup'
 param VMName string
 param VNETName string
 param subnetName string
+param networkRG string
 param VMSize string
 param location string
 
@@ -61,7 +62,7 @@ resource netif 'Microsoft.Network/networkInterfaces@2022-01-01' = {
             id: pubIP.id
           }
           subnet:{
-            id: resourceId('Microsoft.Network/virtualNetworks',VNETName,subnetName)
+            id: '/subscriptions/398b23e8-c4b1-4816-b9b4-db319ba3c09d/resourceGroups/${networkRG}/providers/Microsoft.Network/virtualNetworks/${VNETName}/subnets/${subnetName}'
           }
         }
       }
@@ -89,7 +90,8 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-03-01' = {
       imageReference: {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
-        sku: '2022-Datacenter'
+        sku: '2022-datacenter'
+        version: 'latest'
       }
       osDisk:{
         createOption:'FromImage'

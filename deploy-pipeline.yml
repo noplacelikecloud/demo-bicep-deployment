@@ -20,13 +20,14 @@ steps:
   displayName: Deploy Structure with Azure Storage Table
   env:
       WorkloadName: "NPLCTestWorkload"
-      DeploymentName: "Structure"
+      DeploymentName: "Deployment"
   inputs:
     azureSubscription: '' ## Fill here your Service Connection
     ScriptType: 'InlineScript'
     azurePowerShellVersion: 'LatestVersion'
     Inline: |
       Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
+      Import-Module AzTable
 
       $DeploymentParameters = Read-TableStorage ´
         -StorageAccountName $env:StorageAccountName ´
@@ -39,56 +40,4 @@ steps:
         -Name "StructureDeployment"
         -Location $DeploymentParameters.location
         -TemplateFile $(Build.SourcesDirectory)/main.structure.bicep
-        -TemplateParameterObject $DeploymentParameters
-
-- task: AzurePowerShell@5
-  displayName: Deploy Network with Azure Storage Table
-  env:
-      WorkloadName: "NPLCTestWorkload"
-      DeploymentName: "Network"
-  inputs:
-    azureSubscription: '' ## Fill here your Service Connection
-    ScriptType: 'InlineScript'
-    azurePowerShellVersion: 'LatestVersion'
-    Inline: |
-      Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
-
-      $DeploymentParameters = Read-TableStorage ´
-        -StorageAccountName $env:StorageAccountName ´
-        -TableName $env:TableName ´
-        -StorageAccountRG $env:StorageAccountRG ´
-        -PartitionKey $env:WorkloadName ´
-        -RowKey $env:DeploymentName
-      
-      New-AzResourceGroupDeployment ´
-        -Name "StructureDeployment"
-        -ResourceGroupName $DeploymentParameters.targetResGrp
-        -Location $DeploymentParameters.location
-        -TemplateFile $(Build.SourcesDirectory)/main.network.bicep
-        -TemplateParameterObject $DeploymentParameters
-
-- task: AzurePowerShell@5
-  displayName: Deploy Computing with Azure Storage Table
-  env:
-      WorkloadName: "NPLCTestWorkload"
-      DeploymentName: "Computing"
-  inputs:
-    azureSubscription: '' ## Fill here your Service Connection
-    ScriptType: 'InlineScript'
-    azurePowerShellVersion: 'LatestVersion'
-    Inline: |
-      Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
-
-      $DeploymentParameters = Read-TableStorage ´
-        -StorageAccountName $env:StorageAccountName ´
-        -TableName $env:TableName ´
-        -StorageAccountRG $env:StorageAccountRG ´
-        -PartitionKey $env:WorkloadName ´
-        -RowKey $env:DeploymentName
-      
-      New-AzResourceGroupDeployment ´
-        -Name "StructureDeployment"
-        -ResourceGroupName $DeploymentParameters.targetResGrp
-        -Location $DeploymentParameters.location
-        -TemplateFile $(Build.SourcesDirectory)/main.computing.bicep
         -TemplateParameterObject $DeploymentParameters

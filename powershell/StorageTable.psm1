@@ -24,7 +24,10 @@ function Read-TableStorage {
         exit 0
     }
 
-    return $tabledata
+    $output = @{}
+    $tabledata.psobject.properties | ForEach-Object { $output[$_.Name] = $_.Value }
+
+    return $output
 
 }
 
