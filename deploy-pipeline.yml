@@ -1,0 +1,94 @@
+# NoPlaceLike Cloud - Free to use for all :)
+#
+# Deployment Pipeline for Demo Project
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - name: StorageAccountName
+    value: ""
+  - name: StorageAccountRG
+    value: ""
+  - name: TableName
+    value: ""
+
+steps:
+- task: AzurePowerShell@5
+  displayName: Deploy Structure with Azure Storage Table
+  env:
+      WorkloadName: "NPLCTestWorkload"
+      DeploymentName: "Structure"
+  inputs:
+    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    ScriptType: 'InlineScript'
+    azurePowerShellVersion: 'LatestVersion'
+    Inline: |
+      Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
+
+      $DeploymentParameters = Read-TableStorage ´
+        -StorageAccountName $env:StorageAccountName ´
+        -TableName $env:TableName ´
+        -StorageAccountRG $env:StorageAccountRG ´
+        -PartitionKey $env:WorkloadName ´
+        -RowKey $env:DeploymentName
+      
+      New-AzSubscriptionDeployment ´
+        -Name "StructureDeployment"
+        -Location $DeploymentParameters.location
+        -TemplateFile $(Build.SourcesDirectory)/main.structure.bicep
+        -TemplateParameterObject $DeploymentParameters
+
+- task: AzurePowerShell@5
+  displayName: Deploy Network with Azure Storage Table
+  env:
+      WorkloadName: "NPLCTestWorkload"
+      DeploymentName: "Network"
+  inputs:
+    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    ScriptType: 'InlineScript'
+    azurePowerShellVersion: 'LatestVersion'
+    Inline: |
+      Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
+
+      $DeploymentParameters = Read-TableStorage ´
+        -StorageAccountName $env:StorageAccountName ´
+        -TableName $env:TableName ´
+        -StorageAccountRG $env:StorageAccountRG ´
+        -PartitionKey $env:WorkloadName ´
+        -RowKey $env:DeploymentName
+      
+      New-AzResourceGroupDeployment ´
+        -Name "StructureDeployment"
+        -ResourceGroupName $DeploymentParameters.targetResGrp
+        -Location $DeploymentParameters.location
+        -TemplateFile $(Build.SourcesDirectory)/main.network.bicep
+        -TemplateParameterObject $DeploymentParameters
+
+- task: AzurePowerShell@5
+  displayName: Deploy Computing with Azure Storage Table
+  env:
+      WorkloadName: "NPLCTestWorkload"
+      DeploymentName: "Computing"
+  inputs:
+    azureSubscription: 'Axians DevOps(1)(d3fdec1f-2c9e-48e9-a796-eb8f2928f10c)'
+    ScriptType: 'InlineScript'
+    azurePowerShellVersion: 'LatestVersion'
+    Inline: |
+      Import-Module $(Build.SourcesDirectory)/powershell/Table-Storage.psm1
+
+      $DeploymentParameters = Read-TableStorage ´
+        -StorageAccountName $env:StorageAccountName ´
+        -TableName $env:TableName ´
+        -StorageAccountRG $env:StorageAccountRG ´
+        -PartitionKey $env:WorkloadName ´
+        -RowKey $env:DeploymentName
+      
+      New-AzResourceGroupDeployment ´
+        -Name "StructureDeployment"
+        -ResourceGroupName $DeploymentParameters.targetResGrp
+        -Location $DeploymentParameters.location
+        -TemplateFile $(Build.SourcesDirectory)/main.computing.bicep
+        -TemplateParameterObject $DeploymentParameters
